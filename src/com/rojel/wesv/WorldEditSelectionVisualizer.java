@@ -251,7 +251,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 				}
 			} else if (region instanceof EllipsoidRegion) {
 				EllipsoidRegion ellRegion = (EllipsoidRegion) region;
-				Vector ellRadius = ellRegion.getRadius();
+				Vector ellRadius = ellRegion.getRadius().add(0.5, 0.5, 0.5);
 				
 				Vector center = new Vector(min.getX() + width / 2.0, min.getY() + height / 2.0, min.getZ() + length / 2.0);
 				locs.addAll(plotEllipse(center, new Vector(0, ellRadius.getY(), ellRadius.getZ())));
