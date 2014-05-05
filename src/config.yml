@@ -1,0 +1,9 @@
+horizontalLinesForCuboid: true
+horizontalLinesForPolygon: true
+horizontalLinesForCylinder: true
+horizontalLinesForEllipsoid: true
+gapBetweenPoints: 0.5
+verticalGap: 1
+updateSelectionInterval: 20
+updateParticlesInterval: 5
+players:

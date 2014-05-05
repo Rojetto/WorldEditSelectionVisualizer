@@ -1,0 +1,23 @@
+name: WorldEditSV
+main: com.rojel.worldeditsv.WorldEditSV
+version: 1.0
+author: rojet601
+description: Displays WorldEdit selections. Uses darkblade12's ParticleEffect library.
+depend: [WorldEdit]
+commands:
+  wesv:
+    description: Toggles the WorldEditSelectionVisualizer.
+    permission: wesv.toggle
+    usage: /wesv
+permissions:
+  wesv.*:
+    default: true
+    children:
+      wesv.use: true
+      wesv.toggle: true
+  wesv.use:
+    default: true
+    description: Allows the WESV to be on.
+  wesv.toggle:
+    default: true
+    description: Allows you to toggle your WESV.
