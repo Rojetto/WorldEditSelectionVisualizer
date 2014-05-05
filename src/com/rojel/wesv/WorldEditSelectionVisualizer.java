@@ -145,14 +145,14 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		List<Vector> locs = new ArrayList<Vector>();
 		
 		if (region != null) {
-			int width = region.getWidth() - 1;
-			int length = region.getLength() - 1;
-			int height = region.getHeight() - 1;
+			Vector min = region.getMinimumPoint();
+			Vector max = region.getMaximumPoint().add(1, 1, 1);
+			
+			int width = region.getWidth();
+			int length = region.getLength();
+			int height = region.getHeight();
 			
 			if (region instanceof CuboidRegion) {
-				Vector min = region.getMinimumPoint().add(0.5, 0.5, 0.5);
-				Vector max = region.getMaximumPoint().add(0.5, 0.5, 0.5);
-				
 				List<Vector> bottomCorners = new ArrayList<Vector>();
 				bottomCorners.add(new Vector(min.getX(), min.getY(), min.getZ()));
 				bottomCorners.add(new Vector(max.getX(), min.getY(), min.getZ()));
@@ -222,8 +222,6 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 			} else if (region instanceof CylinderRegion) {
 				CylinderRegion cylRegion = (CylinderRegion) region;
 				Vector center = new Vector(cylRegion.getCenter().getX() + 0.5, cylRegion.getMinimumY() + 0.5, cylRegion.getCenter().getZ() + 0.5);
-				Vector min = cylRegion.getMinimumPoint().add(0.5, 0.5, 0.5);
-				Vector max = cylRegion.getMaximumPoint().add(0.5, 0.5, 0.5);
 				
 				double rx = width / 2.0;
 				double rz = length / 2.0;
@@ -256,7 +254,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 				EllipsoidRegion ellRegion = (EllipsoidRegion) region;
 				Vector ellRadius = ellRegion.getRadius();
 				
-				Vector center = new Vector(ellRegion.getMinimumPoint().getX() + width / 2.0 + 0.5, ellRegion.getMinimumPoint().getY() + height / 2.0 + 0.5, ellRegion.getMinimumPoint().getZ() + length / 2.0 + 0.5);
+				Vector center = new Vector(min.getX() + width / 2.0, min.getY() + height / 2.0, min.getZ() + length / 2.0);
 				locs.addAll(plotEllipse(center, new Vector(0, ellRadius.getY(), ellRadius.getZ())));
 				locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), 0, ellRadius.getZ())));
 				locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), ellRadius.getY(), 0)));
