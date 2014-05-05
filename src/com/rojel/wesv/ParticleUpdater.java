@@ -1,4 +1,4 @@
-package com.rojel.worldeditsv;
+package com.rojel.wesv;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class ParticleUpdater extends BukkitRunnable {
 		for (Vector vec : locs) {
 			Location loc = new Location(player.getWorld(), vec.getX(), vec.getY(), vec.getZ());
 			if (loc.distance(player.getLocation()) <= 20)
-				WorldEditSV.PARTICLE.display(loc, 0, 0, 0, 0, 1, player);
+				WorldEditSelectionVisualizer.PARTICLE.display(loc, 0, 0, 0, 0, 1, player);
 		}
 	}
 }

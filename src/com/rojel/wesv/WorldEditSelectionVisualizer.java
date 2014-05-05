@@ -1,4 +1,4 @@
-package com.rojel.worldeditsv;
+package com.rojel.wesv;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.darkblade12.particleeffect.ParticleEffect;
-import com.rojel.worldeditsv.Metrics.Graph;
+import com.rojel.wesv.Metrics.Graph;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
@@ -30,7 +30,7 @@ import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 
-public class WorldEditSV extends JavaPlugin {
+public class WorldEditSelectionVisualizer extends JavaPlugin {
 	public static ParticleEffect PARTICLE = ParticleEffect.RED_DUST;
 	
 	private WorldEditPlugin we;

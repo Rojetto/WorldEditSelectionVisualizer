@@ -1,5 +1,5 @@
-name: WorldEditSV
-main: com.rojel.worldeditsv.WorldEditSV
+name: WorldEditSelectionVisualizer
+main: com.rojel.worldeditsv.WorldEditSelectionVisualizer
 version: 1.0
 author: rojet601
 description: Displays WorldEdit selections. Uses darkblade12's ParticleEffect library.
