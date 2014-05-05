@@ -188,10 +188,9 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 				Polygonal2DRegion polyRegion = (Polygonal2DRegion) region;
 				
 				List<Vector> bottomCorners = new ArrayList<Vector>();
-				double bottomY = polyRegion.getMinimumY() + 0.5;
 				
 				for (BlockVector2D vec2D : polyRegion.getPoints()) {
-					bottomCorners.add(new Vector(vec2D.getX() + 0.5, bottomY, vec2D.getZ() + 0.5));
+					bottomCorners.add(new Vector(vec2D.getX() + 0.5, min.getY(), vec2D.getZ() + 0.5));
 				}
 				
 				for (int i = 0; i < bottomCorners.size(); i++) {
@@ -221,7 +220,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 				}
 			} else if (region instanceof CylinderRegion) {
 				CylinderRegion cylRegion = (CylinderRegion) region;
-				Vector center = new Vector(cylRegion.getCenter().getX() + 0.5, cylRegion.getMinimumY() + 0.5, cylRegion.getCenter().getZ() + 0.5);
+				Vector center = new Vector(cylRegion.getCenter().getX() + 0.5, min.getY(), cylRegion.getCenter().getZ() + 0.5);
 				
 				double rx = width / 2.0;
 				double rz = length / 2.0;
