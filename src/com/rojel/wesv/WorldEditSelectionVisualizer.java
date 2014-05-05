@@ -441,34 +441,34 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 			});
 			
 			Graph pointGapGraph = metrics.createGraph("Gap between points");
-			pointGapGraph.addPlotter(new Metrics.Plotter("Gap in 1/100 of blocks") {
+			pointGapGraph.addPlotter(new Metrics.Plotter(gapBetweenPoints + "") {
 				@Override
 				public int getValue() {
-					return (int) (gapBetweenPoints * 100);
+					return 1;
 				}
 			});
 			
 			Graph verticalGapGraph = metrics.createGraph("Vertical gap between horizontal filling lines");
-			verticalGapGraph.addPlotter(new Metrics.Plotter("Gap in 1/100 of blocks") {
+			verticalGapGraph.addPlotter(new Metrics.Plotter(verticalGap + "") {
 				@Override
 				public int getValue() {
-					return (int) (verticalGap * 100);
+					return 1;
 				}
 			});
 			
 			Graph particleIntervalGraph = metrics.createGraph("Particle update interval");
-			particleIntervalGraph.addPlotter(new Metrics.Plotter("Interval in ticks") {
+			particleIntervalGraph.addPlotter(new Metrics.Plotter(updateParticlesInterval + "") {
 				@Override
 				public int getValue() {
-					return updateParticlesInterval;
+					return 1;
 				}
 			});
 			
 			Graph selectionIntervalGraph = metrics.createGraph("Selection update interval");
-			selectionIntervalGraph.addPlotter(new Metrics.Plotter("Interval in ticks") {
+			selectionIntervalGraph.addPlotter(new Metrics.Plotter(updateSelectionInterval + "") {
 				@Override
 				public int getValue() {
-					return updateSelectionInterval;
+					return 1;
 				}
 			});
 			
