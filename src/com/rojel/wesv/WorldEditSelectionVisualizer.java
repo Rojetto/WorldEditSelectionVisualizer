@@ -1,6 +1,7 @@
 package com.rojel.wesv;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,11 +32,10 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 
 public class WorldEditSelectionVisualizer extends JavaPlugin {
-	public static ParticleEffect PARTICLE = ParticleEffect.RED_DUST;
-	
 	private WorldEditPlugin we;
 	private Map<UUID, Integer> runningTasks;
 	private Map<UUID, Region> lastSelectedRegions;
+	private ParticleEffect particle = ParticleEffect.RED_DUST;
 	private double gapBetweenPoints;
 	private double verticalGap;
 	private int updateParticlesInterval;
@@ -54,6 +54,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		saveDefaultConfig();
 		getConfig().options().copyDefaults(true);
 		
+		particle = getParticleEffect(getConfig().getString("particleEffect"));		
 		gapBetweenPoints = getConfig().getDouble("gapBetweenPoints");
 		verticalGap = getConfig().getDouble("verticalGap");
 		updateParticlesInterval = getConfig().getInt("updateParticlesInterval");
@@ -284,7 +285,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 			getServer().getScheduler().cancelTask(alreadyRunningTaskId);
 		}
 		
-		int newTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new ParticleUpdater(player, locs), 0, updateParticlesInterval);
+		int newTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new ParticleUpdater(player, locs, particle), 0, updateParticlesInterval);
 		runningTasks.put(player.getUniqueId(), newTaskId);
 	}
 	
@@ -351,6 +352,31 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		getConfig().addDefault(path, true);
 		
 		return getConfig().getBoolean(path);
+	}
+	
+	public ParticleEffect getParticleEffect(String name) {
+		Field[] fields = ParticleEffect.class.getDeclaredFields();
+		
+		for (Field field : fields) {
+			if (field.getName().replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(name.replaceAll("[^a-zA-Z0-9]", ""))) {
+				Object fieldContent = null;
+				try {
+					fieldContent = field.get(ParticleEffect.class);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				
+				if (fieldContent != null && fieldContent instanceof ParticleEffect) {
+					return (ParticleEffect) fieldContent;
+				}
+			}
+		}
+		
+		getLogger().warning("The particle effect set in the configuration file is invalid.");
+		
+		return ParticleEffect.RED_DUST;
 	}
 	
 	private void initMetrics() {
