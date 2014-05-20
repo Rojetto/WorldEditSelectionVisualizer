@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.darkblade12.particleeffect.ParticleEffect;
+import com.darkblade12.particleeffect.ParticleEffect16;
+import com.darkblade12.particleeffect.ParticleEffect17;
 import com.rojel.wesv.Metrics.Graph;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.IncompleteRegionException;
@@ -35,7 +38,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 	private WorldEditPlugin we;
 	private Map<UUID, Integer> runningTasks;
 	private Map<UUID, Region> lastSelectedRegions;
-	private ParticleEffect particle = ParticleEffect.RED_DUST;
+	private ParticleEffect particle;
 	private double gapBetweenPoints;
 	private double verticalGap;
 	private int updateParticlesInterval;
@@ -54,7 +57,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		saveDefaultConfig();
 		getConfig().options().copyDefaults(true);
 		
-		particle = getParticleEffect(getConfig().getString("particleEffect"));		
+		particle = getParticleEffect(getConfig().getString("particleEffect"));
 		gapBetweenPoints = getConfig().getDouble("gapBetweenPoints");
 		verticalGap = getConfig().getDouble("verticalGap");
 		updateParticlesInterval = getConfig().getInt("updateParticlesInterval");
@@ -355,13 +358,18 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 	}
 	
 	public ParticleEffect getParticleEffect(String name) {
-		Field[] fields = ParticleEffect.class.getDeclaredFields();
+		Class<? extends ParticleEffect> particleEffectClass = ParticleEffect17.class;
+		
+		if (isOlderThanMinecraftVersion(Bukkit.getVersion(), "1.6.4"))
+			particleEffectClass = ParticleEffect16.class;
+		
+		Field[] fields = particleEffectClass.getDeclaredFields();
 		
 		for (Field field : fields) {
 			if (field.getName().replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(name.replaceAll("[^a-zA-Z0-9]", ""))) {
 				Object fieldContent = null;
 				try {
-					fieldContent = field.get(ParticleEffect.class);
+					fieldContent = field.get(particleEffectClass);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -376,7 +384,42 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		
 		getLogger().warning("The particle effect set in the configuration file is invalid.");
 		
-		return ParticleEffect.RED_DUST;
+		if (isOlderThanMinecraftVersion(Bukkit.getVersion(), "1.6.4"))
+			return ParticleEffect16.RED_DUST;
+		
+		return ParticleEffect17.RED_DUST;
+	}
+	
+	public boolean isOlderThanMinecraftVersion(String bukkitVersion, String minecraftVersion) {
+		String[] strings = bukkitVersion.split(" ");
+		String mc = strings[2].substring(0, strings[2].length() - 1);
+		
+		String[] subVersionsStrings = mc.split("\\.");
+		int[] subVersions = new int[subVersionsStrings.length];
+		
+		for (int i = 0; i < subVersions.length; i++) {
+			subVersions[i] = Integer.parseInt(subVersionsStrings[i]);
+		}
+		
+		String[] mcSubVersionsStrings = minecraftVersion.split("\\.");
+		int[] mcSubVersions = new int[mcSubVersionsStrings.length];
+		
+		for (int i = 0; i < mcSubVersions.length; i++) {
+			mcSubVersions[i] = Integer.parseInt(mcSubVersionsStrings[i]);
+		}
+		
+		for (int i = 0; i < Math.max(mcSubVersions.length, subVersions.length); i++) {
+			
+			if (i >= subVersions.length && i < mcSubVersions.length)
+				return true;
+			if (i >= mcSubVersions.length && i < subVersions.length)
+				return false;
+			
+			if (subVersions[i] > mcSubVersions[i])
+				return false;
+		}
+		
+		return true;
 	}
 	
 	private void initMetrics() {
