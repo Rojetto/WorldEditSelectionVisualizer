@@ -210,6 +210,7 @@ public enum ParticleEffect16 implements ParticleEffect {
 	private static final Map<String, ParticleEffect16> NAME_MAP = new HashMap<String, ParticleEffect16>();
 	private static final double MAX_RANGE = 16;
 	private static Constructor<?> packetPlayOutWorldParticles;
+	private static boolean emptyConstructor;
 	private static Method getHandle;
 	private static Field playerConnection;
 	private static Method sendPacket;
@@ -220,6 +221,13 @@ public enum ParticleEffect16 implements ParticleEffect {
 			NAME_MAP.put(p.name, p);
 		try {
 			packetPlayOutWorldParticles = ReflectionHandler.getConstructor("Packet63WorldParticles", PackageType.MINECRAFT_SERVER);
+			if (packetPlayOutWorldParticles == null) {
+				emptyConstructor = false;
+				packetPlayOutWorldParticles = ReflectionHandler.getConstructor("Packet63WorldParticles", PackageType.MINECRAFT_SERVER, String.class, float.class,
+						float.class, float.class, float.class, float.class, float.class, float.class, int.class);
+			} else
+				emptyConstructor = true;
+			
 			getHandle = ReflectionHandler.getMethod("CraftPlayer", SubPackageType.ENTITY, "getHandle");
 			playerConnection = ReflectionHandler.getField("EntityPlayer", PackageType.MINECRAFT_SERVER, "playerConnection");
 			sendPacket = ReflectionHandler.getMethod(playerConnection.getType(), "sendPacket", ReflectionHandler.getClass("Packet", PackageType.MINECRAFT_SERVER));
@@ -289,25 +297,29 @@ public enum ParticleEffect16 implements ParticleEffect {
 		if (amount < 1)
 			throw new PacketInstantiationException("Amount cannot be lower than 1");
 		try {
-			Object packet = packetPlayOutWorldParticles.newInstance();
-			
-			Field[] fields = packet.getClass().getDeclaredFields();
-			
-			for (Field field : fields) {
-				field.setAccessible(true);
+			if (emptyConstructor) {
+				Object packet = packetPlayOutWorldParticles.newInstance();
+				
+				Field[] fields = packet.getClass().getDeclaredFields();
+				
+				for (Field field : fields) {
+					field.setAccessible(true);
+				}
+				
+				fields[0].set(packet, name);
+				fields[1].set(packet, (float) center.getX());
+				fields[2].set(packet, (float) center.getY());
+				fields[3].set(packet, (float) center.getZ());
+				fields[4].set(packet, offsetX);
+				fields[5].set(packet, offsetY);
+				fields[6].set(packet, offsetZ);
+				fields[7].set(packet, speed);
+				fields[8].set(packet, amount);
+				
+				return packet;
+			} else {
+				return packetPlayOutWorldParticles.newInstance(name, (float) center.getX(), (float) center.getY(), (float) center.getZ(), offsetX, offsetY, offsetZ, speed, amount);
 			}
-			
-			fields[0].set(packet, name);
-			fields[1].set(packet, (float) center.getX());
-			fields[2].set(packet, (float) center.getY());
-			fields[3].set(packet, (float) center.getZ());
-			fields[4].set(packet, offsetX);
-			fields[5].set(packet, offsetY);
-			fields[6].set(packet, offsetZ);
-			fields[7].set(packet, speed);
-			fields[8].set(packet, amount);
-			
-			return packet;
 		} catch (Exception e) {
 			throw new PacketInstantiationException("Packet instantiation failed", e);
 		}
