@@ -22,8 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.darkblade12.particleeffect.ParticleEffect;
-import com.darkblade12.particleeffect.ParticleEffect16;
-import com.darkblade12.particleeffect.ParticleEffect17;
 import com.rojel.wesv.Metrics.Graph;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.IncompleteRegionException;
@@ -372,11 +370,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	}
 	
 	public ParticleEffect getParticleEffect(String name) {
-		Class<? extends ParticleEffect> particleEffectClass = ParticleEffect17.class;
-		
-		if (isOlderThanMinecraftVersion(Bukkit.getVersion(), "1.6.4"))
-			particleEffectClass = ParticleEffect16.class;
-		
+        Class particleEffectClass = ParticleEffect.class;
 		Field[] fields = particleEffectClass.getDeclaredFields();
 		
 		for (Field field : fields) {
@@ -398,10 +392,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		
 		getLogger().warning("The particle effect set in the configuration file is invalid.");
 		
-		if (isOlderThanMinecraftVersion(Bukkit.getVersion(), "1.6.4"))
-			return ParticleEffect16.RED_DUST;
-		
-		return ParticleEffect17.RED_DUST;
+		return ParticleEffect.REDSTONE;
 	}
 	
 	public boolean isOlderThanMinecraftVersion(String bukkitVersion, String minecraftVersion) {
