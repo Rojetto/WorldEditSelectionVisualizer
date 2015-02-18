@@ -10,9 +10,14 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -34,7 +39,7 @@ import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 
-public class WorldEditSelectionVisualizer extends JavaPlugin {
+public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener {
 	private WorldEditPlugin we;
 	private Map<UUID, Integer> runningTasks;
 	private Map<UUID, Region> lastSelectedRegions;
@@ -47,9 +52,13 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 	private boolean polygonLines;
 	private boolean cylinderLines;
 	private boolean ellipsoidLines;
+	private boolean checkForAxe;
+	private Material selectionItem;
 	
 	@Override
 	public void onEnable() {
+		getServer().getPluginManager().registerEvents(this, this);
+		
 		we = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
 		runningTasks = new HashMap<UUID, Integer>();
 		lastSelectedRegions = new HashMap<UUID, Region>();
@@ -67,6 +76,11 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 		polygonLines = getConfig().getBoolean("horizontalLinesForPolygon");
 		cylinderLines = getConfig().getBoolean("horizontalLinesForCylinder");
 		ellipsoidLines = getConfig().getBoolean("horizontalLinesForEllipsoid");
+		
+		checkForAxe = getConfig().getBoolean("checkForAxe");
+		selectionItem = Material.getMaterial(getConfig().getString("selectionItem"));
+		if (selectionItem == null)
+			selectionItem = Material.WOOD_AXE;
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BukkitRunnable() {
 			@Override
@@ -101,10 +115,10 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 				boolean isEnabled = !isEnabled(player);
 				getConfig().set("players." + player.getUniqueId().toString(), isEnabled);
 				if (isEnabled) {
-					player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSV has been enabled.");
+					player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
 					displaySelection(player);
 				} else {
-					player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSV has been disabled.");
+					player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSelectionVisualizer has been disabled.");
 					sendSelection(player, new ArrayList<Vector>());
 				}
 				
@@ -541,6 +555,20 @@ public class WorldEditSelectionVisualizer extends JavaPlugin {
 			metrics.start();
 		} catch (IOException e) {
 			getLogger().info("Unable to submit statistics to MCStats :(");
+		}
+	}
+	
+	@EventHandler
+	public void onItemChange(PlayerItemHeldEvent event) {
+		Player player = event.getPlayer();
+		
+		if (checkForAxe && isEnabled(player)) {
+			ItemStack item = player.getInventory().getItem(event.getNewSlot());
+			
+			if (item != null && item.getType() == selectionItem)
+				displaySelection(player);
+			else
+				sendSelection(player, new ArrayList<Vector>());
 		}
 	}
 }

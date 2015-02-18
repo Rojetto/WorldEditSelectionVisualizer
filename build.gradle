@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+    maven {
+        url 'http://repo.bukkit.org/content/groups/public'
+    }
+
+    flatDir {
+        dirs 'lib/old'
+    }
+}
+
+dependencies {
+    compile 'org.bukit:bukkit:1.7.9-R0.1'
+    compile 'com.sk89q:worldedit:5.6.2'
+}
