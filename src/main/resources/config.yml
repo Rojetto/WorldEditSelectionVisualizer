@@ -1,6 +1,6 @@
 checkForAxe: true
 selectionItem: WOOD_AXE
-particleEffect: RED_DUST
+particleEffect: REDSTONE
 horizontalLinesForCuboid: true
 horizontalLinesForPolygon: true
 horizontalLinesForCylinder: true
