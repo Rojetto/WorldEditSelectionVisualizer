@@ -1,5 +1,9 @@
 apply plugin: 'java'
 
+jar.archiveName = "wesv.jar"
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 repositories {
     maven { url "http://repo.bukkit.org/content/groups/public" }
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
