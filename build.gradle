@@ -1,16 +1,33 @@
-apply plugin: 'java'
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "1.2.0"
+}
 
-jar.archiveName = "wesv.jar"
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-    maven { url "http://repo.bukkit.org/content/groups/public" }
-    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-    maven { url 'http://maven.sk89q.com/repo/' }
+    maven { url "http://repo.bukkit.org/content/groups/public/" }
+    maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
+    maven { url "http://maven.sk89q.com/repo/" }
+    maven { url "http://repo.mcstats.org/content/repositories/public/" }
 }
 
 dependencies {
-    compile 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
-    compile 'com.sk89q:worldedit:6.0.0-SNAPSHOT'
+    compile "org.bukkit:bukkit:1.8-R0.1-SNAPSHOT"
+    compile "com.sk89q:worldedit:6.0.0-SNAPSHOT"
+    compile "org.mcstats.bukkit:metrics:R7"
 }
+
+jar.archiveName = "wesv.jar"
+
+shadowJar.archiveName = "wesv.jar"
+shadowJar {
+    dependencies {
+        include(dependency("org.mcstats.bukkit:metrics:R7"))
+    }
+
+    relocate "org.mcstats", "com.rojel.wesv"
+}
+
+build.dependsOn(shadowJar)
