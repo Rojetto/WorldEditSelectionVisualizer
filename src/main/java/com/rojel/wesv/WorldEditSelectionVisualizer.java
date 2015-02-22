@@ -89,7 +89,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     public boolean holdsSelectionItem(Player player) {
         ItemStack item = player.getItemInHand();
 
-        return item != null && item.getType() == config().selectionItem();
+        return item != null && item.getType() == config.selectionItem();
     }
 
     public boolean isSelectionShown(Player player) {
@@ -106,9 +106,5 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     public void hideSelection(Player player) {
         shown.put(player.getUniqueId(), false);
         particleSender.setParticlesForPlayer(player, null);
-    }
-
-    public Configuration config() {
-        return config;
     }
 }
