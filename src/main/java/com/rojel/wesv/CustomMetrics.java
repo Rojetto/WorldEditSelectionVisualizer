@@ -12,7 +12,7 @@ public class CustomMetrics {
     }
 
     public void initMetrics() {
-        Configuration config = plugin.config();
+        final Configuration config = plugin.config();
         try {
             Metrics metrics = new Metrics(plugin);
 

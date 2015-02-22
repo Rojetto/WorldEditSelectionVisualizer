@@ -30,8 +30,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		getServer().getPluginManager().registerEvents(this, this);
 		
 		we = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-		runningTasks = new HashMap<UUID, Integer>();
-		lastSelectedRegions = new HashMap<UUID, Region>();
+		runningTasks = new HashMap<>();
+		lastSelectedRegions = new HashMap<>();
 
         config = new Configuration(this);
         config.load();
@@ -113,7 +113,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	}
 	
 	public List<Vector> getLocationsFromSelection(Region region) {
-		List<Vector> locs = new ArrayList<Vector>();
+		List<Vector> locs = new ArrayList<>();
 		
 		if (region != null) {
 			Vector min = region.getMinimumPoint();
@@ -124,7 +124,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			int height = region.getHeight();
 			
 			if (region instanceof CuboidRegion) {
-				List<Vector> bottomCorners = new ArrayList<Vector>();
+				List<Vector> bottomCorners = new ArrayList<>();
 				bottomCorners.add(new Vector(min.getX(), min.getY(), min.getZ()));
 				bottomCorners.add(new Vector(max.getX(), min.getY(), min.getZ()));
 				bottomCorners.add(new Vector(max.getX(), min.getY(), max.getZ()));
@@ -158,7 +158,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			} else if (region instanceof Polygonal2DRegion) {
 				Polygonal2DRegion polyRegion = (Polygonal2DRegion) region;
 				
-				List<Vector> bottomCorners = new ArrayList<Vector>();
+				List<Vector> bottomCorners = new ArrayList<>();
 				
 				for (BlockVector2D vec2D : polyRegion.getPoints()) {
 					bottomCorners.add(new Vector(vec2D.getX() + 0.5, min.getY(), vec2D.getZ() + 0.5));
@@ -260,7 +260,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	}
 	
 	public List<Vector> plotLine(Vector p1, Vector p2) {
-		List<Vector> locs = new ArrayList<Vector>();
+		List<Vector> locs = new ArrayList<>();
 		int points = (int) (p1.distance(p2) / config.gapBetweenPoints()) + 1;
 		
 		double length = p1.distance(p2);
@@ -277,7 +277,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	}
 	
 	public List<Vector> plotEllipse(Vector center, Vector radius) {
-		List<Vector> locs = new ArrayList<Vector>();
+		List<Vector> locs = new ArrayList<>();
 		
 		double biggestR = Math.max(radius.getX(), Math.max(radius.getY(), radius.getZ()));
 		double circleCircumference = 2 * biggestR * Math.PI;
