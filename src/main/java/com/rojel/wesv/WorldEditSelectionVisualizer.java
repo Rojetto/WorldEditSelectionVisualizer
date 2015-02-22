@@ -1,15 +1,11 @@
 package com.rojel.wesv;
 
-import com.darkblade12.particleeffect.ParticleEffect;
-import org.mcstats.Metrics;
-import org.mcstats.Metrics.Graph;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.regions.*;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,25 +16,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener {
 	private WorldEditPlugin we;
 	private Map<UUID, Integer> runningTasks;
 	private Map<UUID, Region> lastSelectedRegions;
-	private ParticleEffect particle;
-	private double gapBetweenPoints;
-	private double verticalGap;
-	private int updateParticlesInterval;
-	private int updateSelectionInterval;
-	private boolean cuboidLines;
-	private boolean polygonLines;
-	private boolean cylinderLines;
-	private boolean ellipsoidLines;
-	private boolean checkForAxe;
-	private Material selectionItem;
+    private Configuration config;
+    private CustomMetrics metrics;
 	
 	@Override
 	public void onEnable() {
@@ -47,31 +32,15 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		we = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
 		runningTasks = new HashMap<UUID, Integer>();
 		lastSelectedRegions = new HashMap<UUID, Region>();
+
+        config = new Configuration(this);
+        config.load();
 		
-		saveDefaultConfig();
-		getConfig().options().copyDefaults(true);
-		
-		particle = getParticleEffect(getConfig().getString("particleEffect"));
-		gapBetweenPoints = getConfig().getDouble("gapBetweenPoints");
-		verticalGap = getConfig().getDouble("verticalGap");
-		updateParticlesInterval = getConfig().getInt("updateParticlesInterval");
-		updateSelectionInterval = getConfig().getInt("updateSelectionInterval");
-		
-		cuboidLines = getConfig().getBoolean("horizontalLinesForCuboid");
-		polygonLines = getConfig().getBoolean("horizontalLinesForPolygon");
-		cylinderLines = getConfig().getBoolean("horizontalLinesForCylinder");
-		ellipsoidLines = getConfig().getBoolean("horizontalLinesForEllipsoid");
-		
-		checkForAxe = getConfig().getBoolean("checkForAxe");
-		selectionItem = Material.getMaterial(getConfig().getString("selectionItem"));
-		if (selectionItem == null)
-			selectionItem = Material.WOOD_AXE;
-		
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BukkitRunnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				for (Player player : getServer().getOnlinePlayers()) {
-					if (isEnabled(player) && player.hasPermission("wesv.use")) {
+					if (config.isEnabled(player) && player.hasPermission("wesv.use")) {
 						Region lastRegion = lastSelectedRegions.get(player.getUniqueId());
 						Region currentRegion = getSelectedRegion(player);
 						
@@ -86,9 +55,10 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 					}
 				}
 			}
-		}, 0, updateSelectionInterval);
+		}.runTaskTimer(this, 0, config.updateSelectionInterval());
 		
-		initMetrics();
+		metrics = new CustomMetrics(this);
+        metrics.initMetrics();
 	}
 	
 	@Override
@@ -97,8 +67,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			Player player = (Player) sender;
 			
 			if (label.equals("wesv")) {
-				boolean isEnabled = !isEnabled(player);
-				getConfig().set("players." + player.getUniqueId().toString(), isEnabled);
+				boolean isEnabled = !config.isEnabled(player);
+				config.setEnabled(player, isEnabled);
 				if (isEnabled) {
 					player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
 					displaySelection(player);
@@ -106,8 +76,6 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 					player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSelectionVisualizer has been disabled.");
 					sendSelection(player, new ArrayList<Vector>());
 				}
-				
-				saveConfig();
 				
 				return true;
 			}
@@ -178,8 +146,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 					locs.addAll(plotLine(p3, p4));
 					locs.addAll(plotLine(p1, p3));
 					
-					if (cuboidLines) {
-						for (double offset = verticalGap; offset < height; offset += verticalGap) {
+					if (config.cuboidLines()) {
+						for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
 							Vector p5 = p1.add(0, offset, 0);
 							Vector p6 = p2.add(0, offset, 0);
 							
@@ -212,8 +180,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 					locs.addAll(plotLine(p3, p4));
 					locs.addAll(plotLine(p1, p3));
 					
-					if (polygonLines) {
-						for (double offset = verticalGap; offset < height; offset += verticalGap) {
+					if (config.polygonLines()) {
+						for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
 							Vector p5 = p1.add(0, offset, 0);
 							Vector p6 = p2.add(0, offset, 0);
 							
@@ -245,8 +213,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 				locs.addAll(plotLine(p3, p3.add(0, height, 0)));
 				locs.addAll(plotLine(p4, p4.add(0, height, 0)));
 				
-				if (cylinderLines) {
-					for (double offset = verticalGap; offset < height; offset += verticalGap) {
+				if (config.cylinderLines()) {
+					for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
 						for (Vector vec : bottomCorners) {
 							locs.add(vec.add(0, offset, 0));
 						}
@@ -261,8 +229,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 				locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), 0, ellRadius.getZ())));
 				locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), ellRadius.getY(), 0)));
 				
-				if (ellipsoidLines) {
-					for (double offset = verticalGap; offset < ellRadius.getY(); offset += verticalGap) {
+				if (config.ellipsoidLines()) {
+					for (double offset = config.verticalGap(); offset < ellRadius.getY(); offset += config.verticalGap()) {
 						Vector center1 = new Vector(center.getX(), center.getY() - offset, center.getZ());
 						Vector center2 = new Vector(center.getX(), center.getY() + offset, center.getZ());
 						double difference = Math.abs(center1.getY() - center.getY());
@@ -287,13 +255,13 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			getServer().getScheduler().cancelTask(alreadyRunningTaskId);
 		}
 		
-		int newTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new ParticleUpdater(player, locs, particle), 0, updateParticlesInterval);
+		int newTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new ParticleUpdater(player, locs, config.particle()), 0, config.updateParticlesInterval());
 		runningTasks.put(player.getUniqueId(), newTaskId);
 	}
 	
 	public List<Vector> plotLine(Vector p1, Vector p2) {
 		List<Vector> locs = new ArrayList<Vector>();
-		int points = (int) (p1.distance(p2) / gapBetweenPoints) + 1;
+		int points = (int) (p1.distance(p2) / config.gapBetweenPoints()) + 1;
 		
 		double length = p1.distance(p2);
 		double gap = length / (points - 1);
@@ -313,7 +281,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		
 		double biggestR = Math.max(radius.getX(), Math.max(radius.getY(), radius.getZ()));
 		double circleCircumference = 2 * biggestR * Math.PI;
-		double deltaTheta = gapBetweenPoints / circleCircumference;
+		double deltaTheta = config.gapBetweenPoints() / circleCircumference;
 		
 		for (double i = 0; i < 1; i += deltaTheta) {
 			double x = center.getX();
@@ -349,204 +317,21 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			return (r1.getMinimumPoint().equals(r2.getMinimumPoint()) && r1.getMaximumPoint().equals(r2.getMaximumPoint()) && r1.getCenter().equals(r2.getCenter()) && r1.getWorld().equals(r2.getWorld()) && r1.getWidth() == r2.getWidth() && r1.getHeight() == r2.getHeight() && r1.getLength() == r2.getLength() && r1.getClass().equals(r2.getClass()));
 	}
 	
-	public boolean isEnabled(Player player) {
-		String path = "players." + player.getUniqueId().toString();
-		getConfig().addDefault(path, true);
-		
-		return getConfig().getBoolean(path);
-	}
-	
-	public ParticleEffect getParticleEffect(String name) {
-        Class particleEffectClass = ParticleEffect.class;
-		Field[] fields = particleEffectClass.getDeclaredFields();
-		
-		for (Field field : fields) {
-			if (field.getName().replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(name.replaceAll("[^a-zA-Z0-9]", ""))) {
-				Object fieldContent = null;
-				try {
-					fieldContent = field.get(particleEffectClass);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-				
-				if (fieldContent != null && fieldContent instanceof ParticleEffect) {
-					return (ParticleEffect) fieldContent;
-				}
-			}
-		}
-		
-		getLogger().warning("The particle effect set in the configuration file is invalid.");
-		
-		return ParticleEffect.REDSTONE;
-	}
-	
-	public boolean isOlderThanMinecraftVersion(String bukkitVersion, String minecraftVersion) {
-		String[] strings = bukkitVersion.split(" ");
-		String mc = strings[2].substring(0, strings[2].length() - 1);
-		
-		String[] subVersionsStrings = mc.split("\\.");
-		int[] subVersions = new int[subVersionsStrings.length];
-		
-		for (int i = 0; i < subVersions.length; i++) {
-			subVersions[i] = Integer.parseInt(subVersionsStrings[i]);
-		}
-		
-		String[] mcSubVersionsStrings = minecraftVersion.split("\\.");
-		int[] mcSubVersions = new int[mcSubVersionsStrings.length];
-		
-		for (int i = 0; i < mcSubVersions.length; i++) {
-			mcSubVersions[i] = Integer.parseInt(mcSubVersionsStrings[i]);
-		}
-		
-		for (int i = 0; i < Math.max(mcSubVersions.length, subVersions.length); i++) {
-			
-			if (i >= subVersions.length && i < mcSubVersions.length)
-				return true;
-			if (i >= mcSubVersions.length && i < subVersions.length)
-				return false;
-			
-			if (subVersions[i] > mcSubVersions[i])
-				return false;
-		}
-		
-		return true;
-	}
-	
-	private void initMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-			
-			Graph cuboidGraph = metrics.createGraph("Horizontal lines for cuboid selections");
-			cuboidGraph.addPlotter(new Metrics.Plotter("Enabled") {
-				@Override
-				public int getValue() {
-					if (cuboidLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			cuboidGraph.addPlotter(new Metrics.Plotter("Disabled") {
-				@Override
-				public int getValue() {
-					if (!cuboidLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			
-			Graph polygonGraph = metrics.createGraph("Horizontal lines for polygon selections");
-			polygonGraph.addPlotter(new Metrics.Plotter("Enabled") {
-				@Override
-				public int getValue() {
-					if (polygonLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			polygonGraph.addPlotter(new Metrics.Plotter("Disabled") {
-				@Override
-				public int getValue() {
-					if (!polygonLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			
-			Graph cylinderGraph = metrics.createGraph("Horizontal lines for cylinder selections");
-			cylinderGraph.addPlotter(new Metrics.Plotter("Enabled") {
-				@Override
-				public int getValue() {
-					if (cylinderLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			cylinderGraph.addPlotter(new Metrics.Plotter("Disabled") {
-				@Override
-				public int getValue() {
-					if (!cylinderLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			
-			Graph ellipsoidGraph = metrics.createGraph("Horizontal lines for ellipsoid selections");
-			ellipsoidGraph.addPlotter(new Metrics.Plotter("Enabled") {
-				@Override
-				public int getValue() {
-					if (ellipsoidLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			ellipsoidGraph.addPlotter(new Metrics.Plotter("Disabled") {
-				@Override
-				public int getValue() {
-					if (!ellipsoidLines)
-						return 1;
-					else
-						return 0;
-				}
-			});
-			
-			Graph pointGapGraph = metrics.createGraph("Gap between points");
-			pointGapGraph.addPlotter(new Metrics.Plotter(gapBetweenPoints + "") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			
-			Graph verticalGapGraph = metrics.createGraph("Vertical gap between horizontal filling lines");
-			verticalGapGraph.addPlotter(new Metrics.Plotter(verticalGap + "") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			
-			Graph particleIntervalGraph = metrics.createGraph("Particle update interval");
-			particleIntervalGraph.addPlotter(new Metrics.Plotter(updateParticlesInterval + "") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			
-			Graph selectionIntervalGraph = metrics.createGraph("Selection update interval");
-			selectionIntervalGraph.addPlotter(new Metrics.Plotter(updateSelectionInterval + "") {
-				@Override
-				public int getValue() {
-					return 1;
-				}
-			});
-			
-			metrics.start();
-		} catch (IOException e) {
-			getLogger().info("Unable to submit statistics to MCStats :(");
-		}
-	}
-	
 	@EventHandler
 	public void onItemChange(PlayerItemHeldEvent event) {
 		Player player = event.getPlayer();
 		
-		if (checkForAxe && isEnabled(player)) {
+		if (config.checkForAxe() && config.isEnabled(player)) {
 			ItemStack item = player.getInventory().getItem(event.getNewSlot());
 			
-			if (item != null && item.getType() == selectionItem)
+			if (item != null && item.getType() == config.selectionItem())
 				displaySelection(player);
 			else
 				sendSelection(player, new ArrayList<Vector>());
 		}
 	}
+
+    public Configuration config() {
+        return config;
+    }
 }
