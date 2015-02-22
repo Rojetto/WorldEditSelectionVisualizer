@@ -25,11 +25,11 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		getServer().getPluginManager().registerEvents(this, this);
         runningTasks = new HashMap<>();
 
-        worldEditHelper = new WorldEditHelper(this);
-        shapeHelper = new ShapeHelper(this);
-
         config = new Configuration(this);
         config.load();
+
+        worldEditHelper = new WorldEditHelper(this);
+        shapeHelper = new ShapeHelper(this);
 		
 		new CustomMetrics(this).initMetrics();
 	}
