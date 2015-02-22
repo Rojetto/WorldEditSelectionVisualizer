@@ -3,6 +3,7 @@ package com.rojel.wesv;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.world.World;
@@ -72,7 +73,25 @@ public class WorldEditHelper {
             return false;
         else if (r1 == null && r2 != null)
             return false;
-        else
-            return (r1.getMinimumPoint().equals(r2.getMinimumPoint()) && r1.getMaximumPoint().equals(r2.getMaximumPoint()) && r1.getCenter().equals(r2.getCenter()) && r1.getWorld().equals(r2.getWorld()) && r1.getWidth() == r2.getWidth() && r1.getHeight() == r2.getHeight() && r1.getLength() == r2.getLength() && r1.getClass().equals(r2.getClass()));
+        else {
+            boolean points = r1.getMinimumPoint().equals(r2.getMinimumPoint()) && r1.getMaximumPoint().equals(r2.getMaximumPoint()) && r1.getCenter().equals(r2.getCenter());
+            boolean worlds = r1.getWorld() != null ? r1.getWorld().equals(r2.getWorld()) : r2.getWorld() == null;
+            boolean dimensions = r1.getWidth() == r2.getWidth() && r1.getHeight() == r2.getHeight() && r1.getLength() == r2.getLength();
+            boolean type = r1.getClass().equals(r2.getClass());
+            boolean polyPoints = true;
+            if (r1 instanceof Polygonal2DRegion && r2 instanceof Polygonal2DRegion) {
+                Polygonal2DRegion r1Poly = (Polygonal2DRegion) r1;
+                Polygonal2DRegion r2Poly = (Polygonal2DRegion) r2;
+
+                if (r1Poly.getPoints().size() != r2Poly.getPoints().size())
+                    polyPoints = false;
+
+                for (int i = 0; i < r1Poly.getPoints().size(); i++)
+                    if (!r1Poly.getPoints().get(i).equals(r2Poly.getPoints().get(i)))
+                        polyPoints = false;
+            }
+
+            return (points && worlds && dimensions && type && polyPoints);
+        }
     }
 }
