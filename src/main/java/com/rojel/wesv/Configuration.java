@@ -4,11 +4,12 @@ import com.darkblade12.particleeffect.ParticleEffect;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 
 public class Configuration {
-    private WorldEditSelectionVisualizer plugin;
+    private JavaPlugin plugin;
     private FileConfiguration config;
 
     private ParticleEffect particle;
@@ -23,7 +24,7 @@ public class Configuration {
     private boolean checkForAxe;
     private Material selectionItem;
 
-    public Configuration(WorldEditSelectionVisualizer plugin) {
+    public Configuration(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

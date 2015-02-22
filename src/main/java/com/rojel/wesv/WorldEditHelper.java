@@ -7,6 +7,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.world.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -14,11 +15,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public class WorldEditHelper {
-    private final WorldEditSelectionVisualizer plugin;
+    private final JavaPlugin plugin;
     private final WorldEditPlugin we;
     private final Map<UUID, Region> lastSelectedRegions;
 
-    public WorldEditHelper(final WorldEditSelectionVisualizer plugin, final Configuration config) {
+    public WorldEditHelper(final JavaPlugin plugin, final Configuration config) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
         lastSelectedRegions = new HashMap<>();
@@ -37,12 +38,12 @@ public class WorldEditHelper {
                             else
                                 lastSelectedRegions.remove(player.getUniqueId());
 
-                            plugin.displaySelection(player);
+                            plugin.getServer().getPluginManager().callEvent(new WorldEditSelectionChangeEvent(player, currentRegion));
                         }
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0, plugin.config().updateSelectionInterval());
+        }.runTaskTimer(plugin, 0, config.updateSelectionInterval());
     }
 
     public Region getSelectedRegion(Player player) {

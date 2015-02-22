@@ -1,14 +1,15 @@
 package com.rojel.wesv;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 import java.io.IOException;
 
 public class CustomMetrics {
-    private WorldEditSelectionVisualizer plugin;
+    private JavaPlugin plugin;
     private Configuration config;
 
-    public CustomMetrics(WorldEditSelectionVisualizer plugin, Configuration config) {
+    public CustomMetrics(JavaPlugin plugin, Configuration config) {
         this.plugin = plugin;
         this.config = config;
     }

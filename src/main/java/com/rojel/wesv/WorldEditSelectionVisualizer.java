@@ -1,7 +1,5 @@
 package com.rojel.wesv;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.regions.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,26 +10,31 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener {
-	private Map<UUID, Integer> runningTasks;
     private Configuration config;
     private WorldEditHelper worldEditHelper;
     private ShapeHelper shapeHelper;
+    private ParticleSender particleSender;
+
+    private Map<UUID, Boolean> shown;
 	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
-        runningTasks = new HashMap<>();
+        shown = new HashMap<>();
 
         config = new Configuration(this);
         config.load();
 
         worldEditHelper = new WorldEditHelper(this, config);
         shapeHelper = new ShapeHelper(config);
-		
-		new CustomMetrics(this, config).initMetrics();
+        particleSender = new ParticleSender(this, config);
+
+        new CustomMetrics(this, config).initMetrics();
 	}
 	
 	@Override
@@ -40,16 +43,17 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			Player player = (Player) sender;
 			
 			if (label.equals("wesv")) {
-				boolean isEnabled = !config.isEnabled(player);
-				config.setEnabled(player, isEnabled);
-				if (isEnabled) {
-					player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
-					displaySelection(player);
-				} else {
-					player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSelectionVisualizer has been disabled.");
-					sendSelection(player, new ArrayList<Vector>());
-				}
-				
+                if (player.hasPermission("wesv.toggle")) {
+                    boolean isEnabled = !config.isEnabled(player);
+                    config.setEnabled(player, isEnabled);
+                    if (isEnabled) {
+                        player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
+                        showSelection(player);
+                    } else {
+                        player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSelectionVisualizer has been disabled.");
+                        hideSelection(player);
+                    }
+                }
 				return true;
 			}
 		} else {
@@ -59,22 +63,14 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 		
 		return false;
 	}
-	
-	public void displaySelection(Player player) {
-		Region region = worldEditHelper.getSelectedRegion(player);
-		List<Vector> locs = shapeHelper.getLocationsFromSelection(region);
-		sendSelection(player, locs);
-	}
-	
-	public void sendSelection(Player player, List<Vector> locs) {
-		if (runningTasks.containsKey(player.getUniqueId())) {
-			int alreadyRunningTaskId = runningTasks.get(player.getUniqueId());
-			getServer().getScheduler().cancelTask(alreadyRunningTaskId);
-		}
-		
-		int newTaskId = new ParticleUpdater(player, locs, config.particle()).runTaskTimer(this, 0, config.updateParticlesInterval()).getTaskId();
-		runningTasks.put(player.getUniqueId(), newTaskId);
-	}
+
+    @EventHandler
+    public void onWorldEditSelectionChange(WorldEditSelectionChangeEvent event) {
+        Player player = event.getPlayer();
+
+        if (isSelectionShown(player))
+            showSelection(player);
+    }
 	
 	@EventHandler
 	public void onItemChange(PlayerItemHeldEvent event) {
@@ -84,11 +80,33 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			ItemStack item = player.getInventory().getItem(event.getNewSlot());
 			
 			if (item != null && item.getType() == config.selectionItem())
-				displaySelection(player);
+				showSelection(player);
 			else
-				sendSelection(player, new ArrayList<Vector>());
+				hideSelection(player);
 		}
 	}
+
+    public boolean holdsSelectionItem(Player player) {
+        ItemStack item = player.getItemInHand();
+
+        return item != null && item.getType() == config().selectionItem();
+    }
+
+    public boolean isSelectionShown(Player player) {
+        return shown.containsKey(player.getUniqueId()) ? shown.get(player.getUniqueId()) : config.isEnabled(player) && holdsSelectionItem(player);
+    }
+
+    public void showSelection(Player player) {
+        if (!player.hasPermission("wesv.use"))
+            return;
+        shown.put(player.getUniqueId(), true);
+        particleSender.setParticlesForPlayer(player, shapeHelper.getLocationsFromRegion(worldEditHelper.getSelectedRegion(player)));
+    }
+
+    public void hideSelection(Player player) {
+        shown.put(player.getUniqueId(), false);
+        particleSender.setParticlesForPlayer(player, null);
+    }
 
     public Configuration config() {
         return config;

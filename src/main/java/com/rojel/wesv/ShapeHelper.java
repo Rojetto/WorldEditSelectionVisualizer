@@ -3,8 +3,12 @@ package com.rojel.wesv;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ShapeHelper {
@@ -14,8 +18,8 @@ public class ShapeHelper {
         this.config = config;
     }
 
-    public List<Vector> getLocationsFromSelection(Region region) {
-        List<Vector> locs = new ArrayList<>();
+    public Collection<Location> getLocationsFromRegion(Region region) {
+        List<Vector> vectors = new ArrayList<>();
 
         if (region != null) {
             Vector min = region.getMinimumPoint();
@@ -44,16 +48,16 @@ public class ShapeHelper {
                     Vector p3 = p1.add(0, height, 0);
                     Vector p4 = p2.add(0, height, 0);
 
-                    locs.addAll(plotLine(p1, p2));
-                    locs.addAll(plotLine(p3, p4));
-                    locs.addAll(plotLine(p1, p3));
+                    vectors.addAll(plotLine(p1, p2));
+                    vectors.addAll(plotLine(p3, p4));
+                    vectors.addAll(plotLine(p1, p3));
 
                     if (config.cuboidLines()) {
                         for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
                             Vector p5 = p1.add(0, offset, 0);
                             Vector p6 = p2.add(0, offset, 0);
 
-                            locs.addAll(plotLine(p5, p6));
+                            vectors.addAll(plotLine(p5, p6));
                         }
                     }
                 }
@@ -78,16 +82,16 @@ public class ShapeHelper {
                     Vector p3 = p1.add(0, height, 0);
                     Vector p4 = p2.add(0, height, 0);
 
-                    locs.addAll(plotLine(p1, p2));
-                    locs.addAll(plotLine(p3, p4));
-                    locs.addAll(plotLine(p1, p3));
+                    vectors.addAll(plotLine(p1, p2));
+                    vectors.addAll(plotLine(p3, p4));
+                    vectors.addAll(plotLine(p1, p3));
 
                     if (config.polygonLines()) {
                         for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
                             Vector p5 = p1.add(0, offset, 0);
                             Vector p6 = p2.add(0, offset, 0);
 
-                            locs.addAll(plotLine(p5, p6));
+                            vectors.addAll(plotLine(p5, p6));
                         }
                     }
                 }
@@ -99,10 +103,10 @@ public class ShapeHelper {
                 double rz = length / 2.0;
 
                 List<Vector> bottomCorners = plotEllipse(center, new Vector(rx, 0, rz));
-                locs.addAll(bottomCorners);
+                vectors.addAll(bottomCorners);
 
                 for (Vector vec : bottomCorners) {
-                    locs.add(vec.add(0, height, 0));
+                    vectors.add(vec.add(0, height, 0));
                 }
 
                 Vector p1 = new Vector((max.getX() + min.getX()) / 2.0, min.getY(), min.getZ());
@@ -110,15 +114,15 @@ public class ShapeHelper {
                 Vector p3 = new Vector(min.getX(), min.getY(), (max.getZ() + min.getZ()) / 2.0);
                 Vector p4 = new Vector(max.getX(), min.getY(), (max.getZ() + min.getZ()) / 2.0);
 
-                locs.addAll(plotLine(p1, p1.add(0, height, 0)));
-                locs.addAll(plotLine(p2, p2.add(0, height, 0)));
-                locs.addAll(plotLine(p3, p3.add(0, height, 0)));
-                locs.addAll(plotLine(p4, p4.add(0, height, 0)));
+                vectors.addAll(plotLine(p1, p1.add(0, height, 0)));
+                vectors.addAll(plotLine(p2, p2.add(0, height, 0)));
+                vectors.addAll(plotLine(p3, p3.add(0, height, 0)));
+                vectors.addAll(plotLine(p4, p4.add(0, height, 0)));
 
                 if (config.cylinderLines()) {
                     for (double offset = config.verticalGap(); offset < height; offset += config.verticalGap()) {
                         for (Vector vec : bottomCorners) {
-                            locs.add(vec.add(0, offset, 0));
+                            vectors.add(vec.add(0, offset, 0));
                         }
                     }
                 }
@@ -127,9 +131,9 @@ public class ShapeHelper {
                 Vector ellRadius = ellRegion.getRadius().add(0.5, 0.5, 0.5);
 
                 Vector center = new Vector(min.getX() + width / 2.0, min.getY() + height / 2.0, min.getZ() + length / 2.0);
-                locs.addAll(plotEllipse(center, new Vector(0, ellRadius.getY(), ellRadius.getZ())));
-                locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), 0, ellRadius.getZ())));
-                locs.addAll(plotEllipse(center, new Vector(ellRadius.getX(), ellRadius.getY(), 0)));
+                vectors.addAll(plotEllipse(center, new Vector(0, ellRadius.getY(), ellRadius.getZ())));
+                vectors.addAll(plotEllipse(center, new Vector(ellRadius.getX(), 0, ellRadius.getZ())));
+                vectors.addAll(plotEllipse(center, new Vector(ellRadius.getX(), ellRadius.getY(), 0)));
 
                 if (config.ellipsoidLines()) {
                     for (double offset = config.verticalGap(); offset < ellRadius.getY(); offset += config.verticalGap()) {
@@ -141,18 +145,25 @@ public class ShapeHelper {
                         double rx = ellRadius.getX() * radiusRatio;
                         double rz = ellRadius.getZ() * radiusRatio;
 
-                        locs.addAll(plotEllipse(center1, new Vector(rx, 0, rz)));
-                        locs.addAll(plotEllipse(center2, new Vector(rx, 0, rz)));
+                        vectors.addAll(plotEllipse(center1, new Vector(rx, 0, rz)));
+                        vectors.addAll(plotEllipse(center2, new Vector(rx, 0, rz)));
                     }
                 }
             }
         }
 
-        return locs;
+        Collection<Location> locations = new ArrayList<>();
+        if (vectors.size() > 0) {
+            World world = Bukkit.getWorld(region.getWorld().getName());
+            for (Vector vector : vectors)
+                locations.add(new Location(world, vector.getX(), vector.getY(), vector.getZ()));
+        }
+
+        return locations;
     }
 
-    public List<Vector> plotLine(Vector p1, Vector p2) {
-        List<Vector> locs = new ArrayList<>();
+    private List<Vector> plotLine(Vector p1, Vector p2) {
+        List<Vector> vectors = new ArrayList<>();
         int points = (int) (p1.distance(p2) / config.gapBetweenPoints()) + 1;
 
         double length = p1.distance(p2);
@@ -162,14 +173,14 @@ public class ShapeHelper {
 
         for (int i = 0; i < points; i++) {
             Vector currentPoint = p1.add(gapVector.multiply(i));
-            locs.add(currentPoint);
+            vectors.add(currentPoint);
         }
 
-        return locs;
+        return vectors;
     }
 
-    public List<Vector> plotEllipse(Vector center, Vector radius) {
-        List<Vector> locs = new ArrayList<>();
+    private List<Vector> plotEllipse(Vector center, Vector radius) {
+        List<Vector> vectors = new ArrayList<>();
 
         double biggestR = Math.max(radius.getX(), Math.max(radius.getY(), radius.getZ()));
         double circleCircumference = 2 * biggestR * Math.PI;
@@ -192,9 +203,9 @@ public class ShapeHelper {
             }
 
             Vector loc = new Vector(x, y, z);
-            locs.add(loc);
+            vectors.add(loc);
         }
 
-        return locs;
+        return vectors;
     }
 }
