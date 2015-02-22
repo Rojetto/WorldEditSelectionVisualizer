@@ -21,10 +21,10 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     private ParticleSender particleSender;
 
     private Map<UUID, Boolean> shown;
-	
-	@Override
-	public void onEnable() {
-		getServer().getPluginManager().registerEvents(this, this);
+
+    @Override
+    public void onEnable() {
+        getServer().getPluginManager().registerEvents(this, this);
         shown = new HashMap<>();
 
         config = new Configuration(this);
@@ -35,14 +35,14 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         particleSender = new ParticleSender(this, config);
 
         new CustomMetrics(this, config).initMetrics();
-	}
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			
-			if (label.equals("wesv")) {
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if (label.equals("wesv")) {
                 if (player.hasPermission("wesv.toggle")) {
                     boolean isEnabled = !config.isEnabled(player);
                     config.setEnabled(player, isEnabled);
@@ -54,15 +54,15 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
                         hideSelection(player);
                     }
                 }
-				return true;
-			}
-		} else {
-			sender.sendMessage("Only a player can toggle his WESV.");
-			return true;
-		}
-		
-		return false;
-	}
+                return true;
+            }
+        } else {
+            sender.sendMessage("Only a player can toggle his WESV.");
+            return true;
+        }
+
+        return false;
+    }
 
     @EventHandler
     public void onWorldEditSelectionChange(WorldEditSelectionChangeEvent event) {
@@ -71,20 +71,20 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         if (isSelectionShown(player))
             showSelection(player);
     }
-	
-	@EventHandler
-	public void onItemChange(PlayerItemHeldEvent event) {
-		Player player = event.getPlayer();
-		
-		if (config.checkForAxe() && config.isEnabled(player)) {
-			ItemStack item = player.getInventory().getItem(event.getNewSlot());
-			
-			if (item != null && item.getType() == config.selectionItem())
-				showSelection(player);
-			else
-				hideSelection(player);
-		}
-	}
+
+    @EventHandler
+    public void onItemChange(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+
+        if (config.checkForAxe() && config.isEnabled(player)) {
+            ItemStack item = player.getInventory().getItem(event.getNewSlot());
+
+            if (item != null && item.getType() == config.selectionItem())
+                showSelection(player);
+            else
+                hideSelection(player);
+        }
+    }
 
     public boolean holdsSelectionItem(Player player) {
         ItemStack item = player.getItemInHand();
