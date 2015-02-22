@@ -1,10 +1,12 @@
 package com.rojel.wesv;
 
-import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.regions.*;
+import com.sk89q.worldedit.world.World;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,7 +25,6 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	private Map<UUID, Integer> runningTasks;
 	private Map<UUID, Region> lastSelectedRegions;
     private Configuration config;
-    private CustomMetrics metrics;
 	
 	@Override
 	public void onEnable() {
@@ -57,8 +58,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			}
 		}.runTaskTimer(this, 0, config.updateSelectionInterval());
 		
-		metrics = new CustomMetrics(this);
-        metrics.initMetrics();
+		new CustomMetrics(this).initMetrics();
 	}
 	
 	@Override
@@ -94,10 +94,10 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 	}
 	
 	public Region getSelectedRegion(Player player) {
-		LocalSession session = we.getWorldEdit().getSession(player.getName());
-		LocalWorld world = BukkitUtil.getLocalWorld(player.getWorld());
+		LocalSession session = we.getWorldEdit().getSessionManager().findByName(player.getDisplayName());
 		
 		if (session != null) {
+            World world = session.getSelectionWorld();
 			RegionSelector selector = session.getRegionSelector(world);
 			
 			if (selector.isDefined()) {
@@ -255,7 +255,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 			getServer().getScheduler().cancelTask(alreadyRunningTaskId);
 		}
 		
-		int newTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new ParticleUpdater(player, locs, config.particle()), 0, config.updateParticlesInterval());
+		int newTaskId = new ParticleUpdater(player, locs, config.particle()).runTaskTimer(this, 0, config.updateParticlesInterval()).getTaskId();
 		runningTasks.put(player.getUniqueId(), newTaskId);
 	}
 	
