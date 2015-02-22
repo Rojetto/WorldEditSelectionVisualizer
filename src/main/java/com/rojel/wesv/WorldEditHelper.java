@@ -18,7 +18,7 @@ public class WorldEditHelper {
     private final WorldEditPlugin we;
     private final Map<UUID, Region> lastSelectedRegions;
 
-    public WorldEditHelper(final WorldEditSelectionVisualizer plugin) {
+    public WorldEditHelper(final WorldEditSelectionVisualizer plugin, final Configuration config) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
         lastSelectedRegions = new HashMap<>();
@@ -27,7 +27,7 @@ public class WorldEditHelper {
             @Override
             public void run() {
                 for (Player player : plugin.getServer().getOnlinePlayers()) {
-                    if (plugin.config().isEnabled(player) && player.hasPermission("wesv.use")) {
+                    if (config.isEnabled(player) && player.hasPermission("wesv.use")) {
                         Region lastRegion = lastSelectedRegions.get(player.getUniqueId());
                         Region currentRegion = getSelectedRegion(player);
 

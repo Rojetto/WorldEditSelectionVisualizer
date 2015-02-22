@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeHelper {
-    private WorldEditSelectionVisualizer plugin;
     private Configuration config;
 
-    public ShapeHelper(WorldEditSelectionVisualizer plugin) {
-        this.plugin = plugin;
-        this.config = plugin.config();
+    public ShapeHelper(Configuration config) {
+        this.config = config;
     }
 
     public List<Vector> getLocationsFromSelection(Region region) {

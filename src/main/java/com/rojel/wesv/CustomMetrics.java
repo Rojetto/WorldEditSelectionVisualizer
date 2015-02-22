@@ -6,13 +6,14 @@ import java.io.IOException;
 
 public class CustomMetrics {
     private WorldEditSelectionVisualizer plugin;
+    private Configuration config;
 
-    public CustomMetrics(WorldEditSelectionVisualizer plugin) {
+    public CustomMetrics(WorldEditSelectionVisualizer plugin, Configuration config) {
         this.plugin = plugin;
+        this.config = config;
     }
 
     public void initMetrics() {
-        final Configuration config = plugin.config();
         try {
             Metrics metrics = new Metrics(plugin);
 

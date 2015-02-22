@@ -28,10 +28,10 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         config = new Configuration(this);
         config.load();
 
-        worldEditHelper = new WorldEditHelper(this);
-        shapeHelper = new ShapeHelper(this);
+        worldEditHelper = new WorldEditHelper(this, config);
+        shapeHelper = new ShapeHelper(config);
 		
-		new CustomMetrics(this).initMetrics();
+		new CustomMetrics(this, config).initMetrics();
 	}
 	
 	@Override
