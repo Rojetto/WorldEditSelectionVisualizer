@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,7 +25,6 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(this, this);
         shown = new HashMap<>();
 
         config = new Configuration(this);
@@ -35,6 +35,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         particleSender = new ParticleSender(this, config);
 
         new CustomMetrics(this, config).initMetrics();
+
+        getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     }
 
     @EventHandler
-    public void onWorldEditSelectionChange(WorldEditSelectionChangeEvent event) {
+    private void onWorldEditSelectionChange(WorldEditSelectionChangeEvent event) {
         Player player = event.getPlayer();
 
         if (isSelectionShown(player))
@@ -73,7 +75,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     }
 
     @EventHandler
-    public void onItemChange(PlayerItemHeldEvent event) {
+    private void onItemChange(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
 
         if (config.checkForAxe() && config.isEnabled(player)) {
@@ -84,6 +86,11 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
             else
                 hideSelection(player);
         }
+    }
+
+    @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        shown.remove(event.getPlayer().getUniqueId());
     }
 
     public boolean holdsSelectionItem(Player player) {

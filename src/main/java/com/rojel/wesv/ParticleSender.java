@@ -2,6 +2,9 @@ package com.rojel.wesv;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -10,15 +13,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ParticleSender {
-    private JavaPlugin plugin;
-    private Configuration config;
-    private Map<UUID, Collection<Location>> playerParticleMap;
+public class ParticleSender implements Listener {
+    private final JavaPlugin plugin;
+    private final Configuration config;
+    private final Map<UUID, Collection<Location>> playerParticleMap;
 
     public ParticleSender(JavaPlugin plugin, Configuration config) {
         this.plugin = plugin;
         this.config = config;
-        playerParticleMap = new HashMap<>();
+        this.playerParticleMap = new HashMap<>();
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         startSending();
     }
@@ -42,5 +47,10 @@ public class ParticleSender {
                 }
             }
         }.runTaskTimer(plugin, 0, config.updateParticlesInterval());
+    }
+
+    @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        playerParticleMap.remove(event.getPlayer().getUniqueId());
     }
 }

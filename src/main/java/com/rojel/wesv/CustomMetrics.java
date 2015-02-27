@@ -6,8 +6,8 @@ import org.mcstats.Metrics;
 import java.io.IOException;
 
 public class CustomMetrics {
-    private JavaPlugin plugin;
-    private Configuration config;
+    private final JavaPlugin plugin;
+    private final Configuration config;
 
     public CustomMetrics(JavaPlugin plugin, Configuration config) {
         this.plugin = plugin;

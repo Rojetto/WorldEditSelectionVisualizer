@@ -7,8 +7,8 @@ import org.bukkit.event.HandlerList;
 
 public class WorldEditSelectionChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
-    private Region region;
+    private final Player player;
+    private final Region region;
 
     public WorldEditSelectionChangeEvent(Player player, Region region) {
         this.player = player;

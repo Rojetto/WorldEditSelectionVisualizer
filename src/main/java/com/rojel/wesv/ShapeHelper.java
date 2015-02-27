@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class ShapeHelper {
-    private Configuration config;
+    private final Configuration config;
 
     public ShapeHelper(Configuration config) {
         this.config = config;
@@ -153,7 +153,7 @@ public class ShapeHelper {
         }
 
         Collection<Location> locations = new ArrayList<>();
-        if (vectors.size() > 0) {
+        if (vectors.size() > 0 && region != null && region.getWorld() != null) {
             World world = Bukkit.getWorld(region.getWorld().getName());
             for (Vector vector : vectors)
                 locations.add(new Location(world, vector.getX(), vector.getY(), vector.getZ()));
