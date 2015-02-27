@@ -50,7 +50,7 @@ public class WorldEditHelper {
     public Region getSelectedRegion(Player player) {
         LocalSession session = we.getWorldEdit().getSessionManager().findByName(player.getDisplayName());
 
-        if (session != null) {
+        if (session != null && session.getSelectionWorld() != null) {
             World world = session.getSelectionWorld();
             RegionSelector selector = session.getRegionSelector(world);
 

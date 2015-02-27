@@ -36,7 +36,7 @@ public class ParticleSender {
                 for (UUID uuid : playerParticleMap.keySet()) {
                     Player player = plugin.getServer().getPlayer(uuid);
                     for (Location loc : playerParticleMap.get(uuid)) {
-                        if (loc.distance(player.getLocation()) <= 16)
+                        if (loc.getWorld().equals(player.getLocation().getWorld()) && loc.distance(player.getLocation()) <= 16)
                             config.particle().display(0, 0, 0, 0, 1, loc, player);
                     }
                 }
