@@ -53,7 +53,7 @@ public class WorldEditHelper implements Listener {
     }
 
     public Region getSelectedRegion(Player player) {
-        LocalSession session = we.getWorldEdit().getSessionManager().findByName(player.getDisplayName());
+        LocalSession session = we.getWorldEdit().getSessionManager().findByName(player.getName());
 
         if (session != null && session.getSelectionWorld() != null) {
             World world = session.getSelectionWorld();
