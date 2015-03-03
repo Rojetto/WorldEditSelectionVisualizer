@@ -4,6 +4,7 @@ version: 1.3.6
 author: Rojetto
 description: Displays WorldEdit selections. Uses darkblade12's ParticleEffect library.
 depend: [WorldEdit]
+softdepend: [ProtocolLib]
 commands:
   wesv:
     description: Toggles the WorldEditSelectionVisualizer.

@@ -11,11 +11,13 @@ repositories {
     maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
     maven { url "http://maven.sk89q.com/repo/" }
     maven { url "http://repo.mcstats.org/content/repositories/public/" }
+    maven { url "http://ci.shadowvolt.com/plugin/repository/everything/" }
 }
 
 dependencies {
     compile "org.bukkit:bukkit:1.8-R0.1-SNAPSHOT"
     compile "com.sk89q:worldedit:6.0.0-SNAPSHOT"
+    compile "com.comphenix.protocol:ProtocolLib:3.6.3-SNAPSHOT"
     compile "org.mcstats.bukkit:metrics:R7"
 }
 
@@ -24,7 +26,7 @@ jar.archiveName = "wesv.jar"
 shadowJar.archiveName = "wesv.jar"
 shadowJar {
     dependencies {
-        include(dependency("org.mcstats.bukkit:metrics:R7"))
+        include dependency("org.mcstats.bukkit:metrics:R7")
     }
 
     relocate "org.mcstats", "com.rojel.wesv"
