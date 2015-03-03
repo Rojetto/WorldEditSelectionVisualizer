@@ -18,6 +18,7 @@ import java.util.UUID;
 public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener {
     private Configuration config;
     private WorldEditHelper worldEditHelper;
+    private ProtocolLibHelper protocolLibHelper;
     private ShapeHelper shapeHelper;
     private ParticleSender particleSender;
 
@@ -31,12 +32,16 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         config.load();
 
         worldEditHelper = new WorldEditHelper(this, config);
+        protocolLibHelper = new ProtocolLibHelper(this, config);
         shapeHelper = new ShapeHelper(config);
-        particleSender = new ParticleSender(this, config);
+        particleSender = new ParticleSender(this, config, protocolLibHelper);
 
         new CustomMetrics(this, config).initMetrics();
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        if (protocolLibHelper.isProtocolLibInstalled())
+            getLogger().info("Found ProtocolLib installed. Will be using it to send particles.");
     }
 
     @Override

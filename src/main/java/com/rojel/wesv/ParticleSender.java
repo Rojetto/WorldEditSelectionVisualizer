@@ -16,11 +16,13 @@ import java.util.UUID;
 public class ParticleSender implements Listener {
     private final JavaPlugin plugin;
     private final Configuration config;
+    private final ProtocolLibHelper protocolLibHelper;
     private final Map<UUID, Collection<Location>> playerParticleMap;
 
-    public ParticleSender(JavaPlugin plugin, Configuration config) {
+    public ParticleSender(JavaPlugin plugin, Configuration config, ProtocolLibHelper protocolLibHelper) {
         this.plugin = plugin;
         this.config = config;
+        this.protocolLibHelper = protocolLibHelper;
         this.playerParticleMap = new HashMap<>();
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -41,8 +43,12 @@ public class ParticleSender implements Listener {
                 for (UUID uuid : playerParticleMap.keySet()) {
                     Player player = plugin.getServer().getPlayer(uuid);
                     for (Location loc : playerParticleMap.get(uuid)) {
-                        if (loc.getWorld().equals(player.getLocation().getWorld()) && loc.distance(player.getLocation()) <= 16)
-                            config.particle().display(0, 0, 0, 0, 1, loc, player);
+                        if (loc.getWorld().equals(player.getLocation().getWorld()) && loc.distance(player.getLocation()) <= 16) {
+                            if (protocolLibHelper.isProtocolLibInstalled())
+                                protocolLibHelper.sendParticle(player, config.particle(), loc, false);
+                            else
+                                config.particle().display(0, 0, 0, 0, 1, loc, player);
+                        }
                     }
                 }
             }
