@@ -1,6 +1,6 @@
 useProtocolLib: false
 particleDistance: 16
-checkForAxe: true
+checkForAxe: false
 selectionItem: WOOD_AXE
 particleEffect: reddust
 horizontalLinesForCuboid: true

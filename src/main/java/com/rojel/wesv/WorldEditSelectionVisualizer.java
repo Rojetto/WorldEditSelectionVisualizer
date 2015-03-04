@@ -58,7 +58,8 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
                     config.setEnabled(player, isEnabled);
                     if (isEnabled) {
                         player.sendMessage(ChatColor.DARK_GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
-                        showSelection(player);
+                        if (shouldShowSelection(player))
+                            showSelection(player);
                     } else {
                         player.sendMessage(ChatColor.DARK_RED + "Your WorldEditSelectionVisualizer has been disabled.");
                         hideSelection(player);
@@ -108,7 +109,11 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     }
 
     public boolean isSelectionShown(Player player) {
-        return shown.containsKey(player.getUniqueId()) ? shown.get(player.getUniqueId()) : config.isEnabled(player) && holdsSelectionItem(player);
+        return shown.containsKey(player.getUniqueId()) ? shown.get(player.getUniqueId()) : shouldShowSelection(player);
+    }
+
+    public boolean shouldShowSelection(Player player) {
+        return config.isEnabled(player) && (!config.checkForAxe() || (config.checkForAxe() && holdsSelectionItem(player)));
     }
 
     public void showSelection(Player player) {
