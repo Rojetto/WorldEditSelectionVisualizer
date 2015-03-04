@@ -2,7 +2,7 @@ name: WorldEditSelectionVisualizer
 main: com.rojel.wesv.WorldEditSelectionVisualizer
 version: 1.4-dev
 author: Rojetto
-description: Displays WorldEdit selections.
+description: Shows WorldEdit selections with particles.
 depend: [WorldEdit]
 softdepend: [ProtocolLib]
 commands:
