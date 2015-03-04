@@ -23,6 +23,8 @@ public class Configuration {
     private boolean ellipsoidLines;
     private boolean checkForAxe;
     private Material selectionItem;
+    private int particleDistance;
+    private boolean useProtocolLib;
 
     public Configuration(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -48,28 +50,15 @@ public class Configuration {
         selectionItem = Material.getMaterial(config.getString("selectionItem"));
         if (selectionItem == null)
             selectionItem = Material.WOOD_AXE;
+
+        particleDistance = config.getInt("particleDistance");
+        useProtocolLib = config.getBoolean("useProtocolLib");
     }
 
     public ParticleEffect getParticleEffect(String name) {
-        Class particleEffectClass = ParticleEffect.class;
-        Field[] fields = particleEffectClass.getDeclaredFields();
-
-        for (Field field : fields) {
-            if (field.getName().replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(name.replaceAll("[^a-zA-Z0-9]", ""))) {
-                Object fieldContent = null;
-                try {
-                    fieldContent = field.get(particleEffectClass);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                if (fieldContent != null && fieldContent instanceof ParticleEffect) {
-                    return (ParticleEffect) fieldContent;
-                }
-            }
-        }
+        ParticleEffect effect = ParticleEffect.fromName(name);
+        if (effect != null)
+            return effect;
 
         plugin.getLogger().warning("The particle effect set in the configuration file is invalid.");
 
@@ -130,5 +119,13 @@ public class Configuration {
 
     public Material selectionItem() {
         return selectionItem;
+    }
+
+    public boolean useProtocolLib() {
+        return useProtocolLib;
+    }
+
+    public int particleDistance() {
+        return particleDistance;
     }
 }

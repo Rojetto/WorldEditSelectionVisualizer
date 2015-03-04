@@ -1,6 +1,6 @@
 checkForAxe: true
 selectionItem: WOOD_AXE
-particleEffect: REDSTONE
+particleEffect: reddust
 horizontalLinesForCuboid: true
 horizontalLinesForPolygon: true
 horizontalLinesForCylinder: true
@@ -9,4 +9,6 @@ gapBetweenPoints: 0.5
 verticalGap: 1
 updateSelectionInterval: 20
 updateParticlesInterval: 5
+useProtocolLib: false
+particleDistance: 16
 players:

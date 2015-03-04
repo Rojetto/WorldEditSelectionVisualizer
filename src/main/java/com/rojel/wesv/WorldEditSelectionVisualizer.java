@@ -40,8 +40,11 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
 
         getServer().getPluginManager().registerEvents(this, this);
 
-        if (protocolLibHelper.isProtocolLibInstalled())
-            getLogger().info("Found ProtocolLib installed. Will be using it to send particles.");
+        if (config.useProtocolLib() && !protocolLibHelper.isProtocolLibInstalled())
+            getLogger().info("ProtocolLib is enabled in the config but not installed. You need to install ProtocolLib if you want to use certain features.");
+
+        if (config.particleDistance() > 16 && !protocolLibHelper.canUseProtocolLib())
+            getLogger().info("Particle distances > 16 only work with ProtocolLib. Set \"useProtocolLib\" in the config to \"true\" and/or install ProtocolLib.");
     }
 
     @Override

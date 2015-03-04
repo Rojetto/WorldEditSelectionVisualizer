@@ -40,12 +40,16 @@ public class ParticleSender implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                int particleDistance = config.particleDistance();
+                if (particleDistance > 16 && !protocolLibHelper.canUseProtocolLib())
+                    particleDistance = 16;
+
                 for (UUID uuid : playerParticleMap.keySet()) {
                     Player player = plugin.getServer().getPlayer(uuid);
                     for (Location loc : playerParticleMap.get(uuid)) {
-                        if (loc.getWorld().equals(player.getLocation().getWorld()) && loc.distance(player.getLocation()) <= 16) {
-                            if (protocolLibHelper.isProtocolLibInstalled())
-                                protocolLibHelper.sendParticle(player, config.particle(), loc, false);
+                        if (loc.getWorld().equals(player.getLocation().getWorld()) && loc.distance(player.getLocation()) <= particleDistance) {
+                            if (protocolLibHelper.canUseProtocolLib())
+                                protocolLibHelper.sendParticle(player, loc);
                             else
                                 config.particle().display(0, 0, 0, 0, 1, loc, player);
                         }
