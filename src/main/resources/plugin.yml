@@ -1,6 +1,6 @@
 name: WorldEditSelectionVisualizer
 main: com.rojel.wesv.WorldEditSelectionVisualizer
-version: 1.3.6
+version: 1.4-dev
 author: Rojetto
 description: Displays WorldEdit selections.
 depend: [WorldEdit]
