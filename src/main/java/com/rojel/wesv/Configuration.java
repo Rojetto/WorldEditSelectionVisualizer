@@ -47,9 +47,7 @@ public class Configuration {
         ellipsoidLines = config.getBoolean("horizontalLinesForEllipsoid");
 
         checkForAxe = config.getBoolean("checkForAxe");
-        selectionItem = Material.getMaterial(config.getString("selectionItem"));
-        if (selectionItem == null)
-            selectionItem = Material.WOOD_AXE;
+        selectionItem = getSelectionItem(config.getString("selectionItem"));
 
         particleDistance = config.getInt("particleDistance");
         useProtocolLib = config.getBoolean("useProtocolLib");
@@ -63,6 +61,16 @@ public class Configuration {
         plugin.getLogger().warning("The particle effect set in the configuration file is invalid.");
 
         return ParticleEffect.REDSTONE;
+    }
+
+    public Material getSelectionItem(String name) {
+        Material selectionItem = Material.getMaterial(name);
+        if (selectionItem != null)
+            return selectionItem;
+
+        plugin.getLogger().warning("The selection item set in the configuration file is invalid.");
+
+        return Material.WOOD_AXE;
     }
 
     public boolean isEnabled(Player player) {
