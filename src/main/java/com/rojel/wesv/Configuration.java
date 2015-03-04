@@ -6,8 +6,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-
 public class Configuration {
     private JavaPlugin plugin;
     private FileConfiguration config;
