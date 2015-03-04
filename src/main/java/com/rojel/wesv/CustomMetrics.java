@@ -19,82 +19,34 @@ public class CustomMetrics {
             Metrics metrics = new Metrics(plugin);
 
             Metrics.Graph cuboidGraph = metrics.createGraph("Horizontal lines for cuboid selections");
-            cuboidGraph.addPlotter(new Metrics.Plotter("Enabled") {
+            cuboidGraph.addPlotter(new Metrics.Plotter(config.cuboidLines() ? "Enabled" : "Disabled") {
                 @Override
                 public int getValue() {
-                    if (config.cuboidLines())
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
-            cuboidGraph.addPlotter(new Metrics.Plotter("Disabled") {
-                @Override
-                public int getValue() {
-                    if (!config.cuboidLines())
-                        return 1;
-                    else
-                        return 0;
+                    return 1;
                 }
             });
 
             Metrics.Graph polygonGraph = metrics.createGraph("Horizontal lines for polygon selections");
-            polygonGraph.addPlotter(new Metrics.Plotter("Enabled") {
+            polygonGraph.addPlotter(new Metrics.Plotter(config.polygonLines() ? "Enabled" : "Disabled") {
                 @Override
                 public int getValue() {
-                    if (config.polygonLines())
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
-            polygonGraph.addPlotter(new Metrics.Plotter("Disabled") {
-                @Override
-                public int getValue() {
-                    if (!config.polygonLines())
-                        return 1;
-                    else
-                        return 0;
+                    return 1;
                 }
             });
 
             Metrics.Graph cylinderGraph = metrics.createGraph("Horizontal lines for cylinder selections");
-            cylinderGraph.addPlotter(new Metrics.Plotter("Enabled") {
+            cylinderGraph.addPlotter(new Metrics.Plotter(config.cylinderLines() ? "Enabled" : "Disabled") {
                 @Override
                 public int getValue() {
-                    if (config.cylinderLines())
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
-            cylinderGraph.addPlotter(new Metrics.Plotter("Disabled") {
-                @Override
-                public int getValue() {
-                    if (!config.cylinderLines())
-                        return 1;
-                    else
-                        return 0;
+                    return 1;
                 }
             });
 
             Metrics.Graph ellipsoidGraph = metrics.createGraph("Horizontal lines for ellipsoid selections");
-            ellipsoidGraph.addPlotter(new Metrics.Plotter("Enabled") {
+            ellipsoidGraph.addPlotter(new Metrics.Plotter(config.ellipsoidLines() ? "Enabled" : "Disabled") {
                 @Override
                 public int getValue() {
-                    if (config.ellipsoidLines())
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
-            ellipsoidGraph.addPlotter(new Metrics.Plotter("Disabled") {
-                @Override
-                public int getValue() {
-                    if (!config.ellipsoidLines())
-                        return 1;
-                    else
-                        return 0;
+                    return 1;
                 }
             });
 
@@ -124,6 +76,30 @@ public class CustomMetrics {
 
             Metrics.Graph selectionIntervalGraph = metrics.createGraph("Selection update interval");
             selectionIntervalGraph.addPlotter(new Metrics.Plotter(config.updateSelectionInterval() + "") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
+            Metrics.Graph particleEffectGraph = metrics.createGraph("Particle effect");
+            particleEffectGraph.addPlotter(new Metrics.Plotter(config.particle().getName()) {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
+            Metrics.Graph protocolLibGraph = metrics.createGraph("Use ProtocolLib");
+            protocolLibGraph.addPlotter(new Metrics.Plotter(config.useProtocolLib() ? "Enabled" : "Disabled") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
+            Metrics.Graph particleDistanceGraph = metrics.createGraph("Particle distance");
+            particleDistanceGraph.addPlotter(new Metrics.Plotter(config.particleDistance() + "") {
                 @Override
                 public int getValue() {
                     return 1;
