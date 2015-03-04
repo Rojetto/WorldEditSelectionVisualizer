@@ -2,7 +2,7 @@ name: WorldEditSelectionVisualizer
 main: com.rojel.wesv.WorldEditSelectionVisualizer
 version: 1.3.6
 author: Rojetto
-description: Displays WorldEdit selections. Uses darkblade12's ParticleEffect library.
+description: Displays WorldEdit selections.
 depend: [WorldEdit]
 softdepend: [ProtocolLib]
 commands:
