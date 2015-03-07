@@ -23,10 +23,12 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     private ParticleSender particleSender;
 
     private Map<UUID, Boolean> shown;
+    private Map<UUID, Boolean> lastSelectionTooLarge;
 
     @Override
     public void onEnable() {
         shown = new HashMap<>();
+        lastSelectionTooLarge = new HashMap<>();
 
         config = new Configuration(this);
         config.load();
@@ -79,8 +81,17 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     private void onWorldEditSelectionChange(WorldEditSelectionChangeEvent event) {
         Player player = event.getPlayer();
 
-        if (isSelectionShown(player))
-            showSelection(player);
+        if (isSelectionShown(player)) {
+            if (event.getRegion().getArea() > config.maxSize()) {
+                particleSender.setParticlesForPlayer(player, null);
+                if (!lastSelectionTooLarge.get(player.getUniqueId()))
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + "The visualizer only works with selections up to a size of " + config.maxSize() + ".");
+                lastSelectionTooLarge.put(player.getUniqueId(), true);
+            } else {
+                lastSelectionTooLarge.put(player.getUniqueId(), false);
+                showSelection(player);
+            }
+        }
     }
 
     @EventHandler
@@ -100,6 +111,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent event) {
         shown.remove(event.getPlayer().getUniqueId());
+        lastSelectionTooLarge.remove(event.getPlayer().getUniqueId());
     }
 
     public boolean holdsSelectionItem(Player player) {
