@@ -7,7 +7,7 @@ depend: [WorldEdit]
 softdepend: [ProtocolLib]
 commands:
   wesv:
-    description: Toggles the WorldEditSelectionVisualizer.
+    description: Toggles the visualizer.
     permission: wesv.toggle
     usage: /wesv
 permissions:
@@ -18,7 +18,7 @@ permissions:
       wesv.toggle: true
   wesv.use:
     default: true
-    description: Allows the WESV to be on.
+    description: Allows the visualizer to be used.
   wesv.toggle:
     default: true
-    description: Allows you to toggle your WESV.
+    description: Allows the visualizer to be toggled.
