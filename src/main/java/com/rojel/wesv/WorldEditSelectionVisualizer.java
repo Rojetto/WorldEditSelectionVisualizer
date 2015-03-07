@@ -1,5 +1,6 @@
 package com.rojel.wesv;
 
+import com.sk89q.worldedit.regions.Region;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -82,15 +83,7 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
         Player player = event.getPlayer();
 
         if (isSelectionShown(player)) {
-            if (event.getRegion().getArea() > config.maxSize()) {
-                particleSender.setParticlesForPlayer(player, null);
-                if (!lastSelectionTooLarge.get(player.getUniqueId()))
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + "The visualizer only works with selections up to a size of " + config.maxSize() + ".");
-                lastSelectionTooLarge.put(player.getUniqueId(), true);
-            } else {
-                lastSelectionTooLarge.put(player.getUniqueId(), false);
-                showSelection(player);
-            }
+            showSelection(player);
         }
     }
 
@@ -131,8 +124,20 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
     public void showSelection(Player player) {
         if (!player.hasPermission("wesv.use"))
             return;
+
+        Region region = worldEditHelper.getSelectedRegion(player);
+
+        if (region != null && region.getArea() > config.maxSize()) {
+            particleSender.setParticlesForPlayer(player, null);
+            if (!lastSelectionTooLarge.get(player.getUniqueId()))
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "The visualizer only works with selections up to a size of " + config.maxSize() + " blocks.");
+            lastSelectionTooLarge.put(player.getUniqueId(), true);
+        } else {
+            lastSelectionTooLarge.put(player.getUniqueId(), false);
+            particleSender.setParticlesForPlayer(player, shapeHelper.getLocationsFromRegion(region));
+        }
+
         shown.put(player.getUniqueId(), true);
-        particleSender.setParticlesForPlayer(player, shapeHelper.getLocationsFromRegion(worldEditHelper.getSelectedRegion(player)));
     }
 
     public void hideSelection(Player player) {
