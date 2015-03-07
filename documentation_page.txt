@@ -1,0 +1,36 @@
+== Documentation ==
+=== Commands ===
+
+* ///wesv// to toggle your selection visualizer.
+
+=== Permissions ===
+
+* //wesv.toggle// for the toggle command
+
+* //wesv.use// allows the visualizer to be turned on
+
+=== Configuration ===
+
+**This plugin can be very resource expensive, try adjusting the configuration if you experience lag or clients being kicked.**
+
+* //useProtocolLib//: Should the plugin use [[http://dev.bukkit.org/bukkit-plugins/protocollib/|ProtocolLib]] to send particle packets. This requires ProtocolLib to be installed as a plugin on the server. This option needs to be turned on if you want to use a //particleDistance// > 16. **(v1.4+)**
+
+* //particleDistance//: The maximum distance in which players can see the displayed particles. If you want this number to be greater than 16, you need to have ProtocolLib installed and //useProtocolLib// enabled. Higher numbers might mean slightly more lag. **(v1.4+)**
+
+* //maxSize//: If a selection contains more blocks than //maxSize// it won't be visualized. This is to prevent players from crashing the server by selecting huge regions and spawning too much particles. Higher numbers might result in more lag if players aren't careful. **(v1.4+)**
+
+* //checkForAxe//: Should the selection only get displayed while the player is holding the WorldEdit selection item (usually a wooden axe). **(v1.3+)**
+
+* //selectionItem//: The WorldEdit selection item to look for. Valid options are listed [[http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html|here]]. **(v1.3+)**
+
+* //particleEffect//: The type of particle that is used to display the selection. Valid options are listed [[http://minecraft.gamepedia.com/Particles|here]]. If the particle name can't be recognized, the plugin will fall back to "reddust". **(v1.2+)**
+
+* //horizontalLinesFor(Cuboid|Polygon|Cylinder|Ellipsoid (includes spheres))//: Enables horizontal filling lines that make the selection clearer. With this option disabled the WESV only spawns particles at the edges of the selection.
+
+* //gapBetweenPoints//: The gap in blocks between particles when rendering lines. Higher numbers mean less particles in total.
+
+* //verticalGap//: The gap in blocks between the horizontal filling lines. Higher numbers mean less particles in total.
+
+* //updateSelectionInterval//: The interval in ticks in which the plugin looks if the selection of anyone has changed. Higher numbers mean that players have to wait longer before their new selection is displayed to them.
+
+* //updateParticlesInterval//: The interval in ticks in which the particles are refreshed (because they decay). Higher numbers mean less lag but it will probably look awful.

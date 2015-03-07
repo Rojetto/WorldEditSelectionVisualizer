@@ -1,0 +1,32 @@
+== WorldEditSelectionVisualizer
+=== Overview ===
+
+WorldEditSelectionVisualizer (WESV) is essentially the famous [[http://www.minecraftforum.net/topic/2171206-172-worldeditcui/|WorldEditCUI mod]] in the form of a bukkit plugin, which means that players **don't need to install anything on their client**.
+
+=== Features ===
+
+* Spawns particles around WorldEdit selections so players can see them
+* No client mod required
+* Supports cuboid, sphere, ellipsoid, cylinder and polygon selections
+* Use ///wesv// to toggle the visualizer
+* Only show the selection when holding the selection item
+* Configurable particle effect
+* Force large particle distances to see your selection from far away
+* Prevent players from spawning too many particles when selecting huge regions
+* Highly customizable for the performance of your server
+
+=== Documentation ===
+
+Detailed documentation about the available permissions and configuration options is available on the [[http://dev.bukkit.org/bukkit-plugins/worldedit-selection-visualizer/pages/documentation/|documentation page]].
+
+=== Screenshots ===
+
+{{http://i.imgur.com/0MAcN3o.png|Cuboid selection}}
+{{http://i.imgur.com/OqSQQr7.png|Polygon selection}}
+{{http://i.imgur.com/pOwYY62.png|Ellipsoid selection}}
+{{http://i.imgur.com/VcR0IMA.png|Customizable particle effect, large particle distance}}
+
+=== Credits and Metrics ===
+
+This plugin uses [[https://forums.bukkit.org/threads/lib-1-7-particleeffect-v1-4.154406/|darkblade12's ParticleEffect library]] to spawn the particles.
+It also anonymously collects statistics via MCStats Plugin Metrics. You can read about the data that is being collected [[https://forums.bukkit.org/threads/mcstats-plugin-metrics-r7-easy-advanced-plugin-statistics.77352/|here]]. You can see the statistics [[http://mcstats.org/plugin/WorldEditSelectionVisualizer|here]].
