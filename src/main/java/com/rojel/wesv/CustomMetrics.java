@@ -106,6 +106,14 @@ public class CustomMetrics {
                 }
             });
 
+            Metrics.Graph maxSizeGraph = metrics.createGraph("Maximum selection size");
+            maxSizeGraph.addPlotter(new Metrics.Plotter(config.maxSize() + "") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
             metrics.start();
         } catch (IOException e) {
             plugin.getLogger().info("Unable to submit statistics to MCStats :(");
