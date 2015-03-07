@@ -30,6 +30,7 @@ shadowJar {
     }
 
     relocate "org.mcstats", "com.rojel.wesv"
+    exclude "META-INF/maven/**"
 }
 
 build.dependsOn(shadowJar)
