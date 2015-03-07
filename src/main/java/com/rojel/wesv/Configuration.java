@@ -23,6 +23,7 @@ public class Configuration {
     private Material selectionItem;
     private int particleDistance;
     private boolean useProtocolLib;
+    private int maxSize;
 
     public Configuration(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -49,6 +50,7 @@ public class Configuration {
 
         particleDistance = config.getInt("particleDistance");
         useProtocolLib = config.getBoolean("useProtocolLib");
+        maxSize = config.getInt("maxSize");
     }
 
     public ParticleEffect getParticleEffect(String name) {
@@ -133,5 +135,9 @@ public class Configuration {
 
     public int particleDistance() {
         return particleDistance;
+    }
+
+    public int maxSize() {
+        return maxSize;
     }
 }

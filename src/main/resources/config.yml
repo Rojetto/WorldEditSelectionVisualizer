@@ -1,5 +1,6 @@
 useProtocolLib: false
 particleDistance: 16
+maxSize: 10000
 checkForAxe: false
 selectionItem: WOOD_AXE
 particleEffect: reddust
