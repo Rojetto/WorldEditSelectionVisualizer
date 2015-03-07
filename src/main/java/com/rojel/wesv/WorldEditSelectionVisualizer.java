@@ -60,18 +60,18 @@ public class WorldEditSelectionVisualizer extends JavaPlugin implements Listener
                     boolean isEnabled = !config.isEnabled(player);
                     config.setEnabled(player, isEnabled);
                     if (isEnabled) {
-                        player.sendMessage(ChatColor.GREEN + "Your WorldEditSelectionVisualizer has been enabled.");
+                        player.sendMessage(ChatColor.GREEN + "Your visualizer has been enabled.");
                         if (shouldShowSelection(player))
                             showSelection(player);
                     } else {
-                        player.sendMessage(ChatColor.RED + "Your WorldEditSelectionVisualizer has been disabled.");
+                        player.sendMessage(ChatColor.RED + "Your visualizer has been disabled.");
                         hideSelection(player);
                     }
                 }
                 return true;
             }
         } else {
-            sender.sendMessage("Only a player can toggle his WESV.");
+            sender.sendMessage("Only a player can toggle his visualizer.");
             return true;
         }
 
