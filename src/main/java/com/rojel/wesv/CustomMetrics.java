@@ -90,6 +90,14 @@ public class CustomMetrics {
                 }
             });
 
+            Metrics.Graph checkForAxeGraph = metrics.createGraph("Check for axe");
+            checkForAxeGraph.addPlotter(new Metrics.Plotter(config.checkForAxe() ? "Enabled" : "Disabled") {
+                @Override
+                public int getValue() {
+                    return 1;
+                }
+            });
+
             Metrics.Graph protocolLibGraph = metrics.createGraph("Use ProtocolLib");
             protocolLibGraph.addPlotter(new Metrics.Plotter(config.useProtocolLib() ? "Enabled" : "Disabled") {
                 @Override
