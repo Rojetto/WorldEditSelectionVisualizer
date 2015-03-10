@@ -24,7 +24,7 @@ public class ProtocolLibHelper {
         this.config = config;
 
         this.protocolLibInstalled = plugin.getServer().getPluginManager().getPlugin("ProtocolLib") != null;
-        if (protocolLibInstalled) {
+        if (canUseProtocolLib()) {
             protocolManager = ProtocolLibrary.getProtocolManager();
             particleType = fromParticleEffect(config.particle());
         }
