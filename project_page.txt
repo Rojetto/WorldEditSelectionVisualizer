@@ -21,7 +21,7 @@ Detailed documentation about the available permissions and configuration options
 
 === ProtocolLib ===
 
-This plugin has optional support for [[http://dev.bukkit.org/bukkit-plugins/protocollib/|ProtocolLib (Jenkins build #74+)]].
+This plugin has optional support for [[http://dev.bukkit.org/bukkit-plugins/protocollib/|ProtocolLib]] **(Jenkins build #74+)**.
 If you want to see particles from distances > 16, you need to have it installed and enabled in the configuration (see [[http://dev.bukkit.org/bukkit-plugins/worldedit-selection-visualizer/pages/documentation/|Documentation]]).
 
 === Screenshots ===

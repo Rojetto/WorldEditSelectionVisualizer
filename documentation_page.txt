@@ -13,7 +13,7 @@
 
 **This plugin can be very resource expensive, try adjusting the configuration if you experience lag or clients being kicked.**
 
-* //useProtocolLib//: Should the plugin use [[http://dev.bukkit.org/bukkit-plugins/protocollib/|ProtocolLib (Jenkins build #74+)]] to send particle packets. This requires ProtocolLib to be installed as a plugin on the server. This option needs to be turned on if you want to use a //particleDistance// > 16. **(v1.4+)**
+* //useProtocolLib//: Should the plugin use [[http://dev.bukkit.org/bukkit-plugins/protocollib/|ProtocolLib]] **(Jenkins build #74+)** to send particle packets. This requires ProtocolLib to be installed as a plugin on the server. This option needs to be turned on if you want to use a //particleDistance// > 16. **(v1.4+)**
 
 * //particleDistance//: The maximum distance in which players can see the displayed particles. If you want this number to be greater than 16, you need to have ProtocolLib installed and //useProtocolLib// enabled. Higher numbers might mean slightly more lag. **(v1.4+)**
 
