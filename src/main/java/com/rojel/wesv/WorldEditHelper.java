@@ -88,12 +88,13 @@ public class WorldEditHelper implements Listener {
                 Polygonal2DRegion r1Poly = (Polygonal2DRegion) r1;
                 Polygonal2DRegion r2Poly = (Polygonal2DRegion) r2;
 
-                if (r1Poly.getPoints().size() != r2Poly.getPoints().size())
+                if (r1Poly.getPoints().size() != r2Poly.getPoints().size()) {
                     polyPoints = false;
-
-                for (int i = 0; i < r1Poly.getPoints().size(); i++)
-                    if (!r1Poly.getPoints().get(i).equals(r2Poly.getPoints().get(i)))
-                        polyPoints = false;
+                } else {
+                    for (int i = 0; i < r1Poly.getPoints().size(); i++)
+                        if (!r1Poly.getPoints().get(i).equals(r2Poly.getPoints().get(i)))
+                            polyPoints = false;
+                }
             }
 
             return (points && worlds && dimensions && type && polyPoints);
